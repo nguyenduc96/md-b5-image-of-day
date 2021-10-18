@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    #img-of-the-day {
+        width: 300px;
+        border-radius: 20px;
+    }
+
+    #comment {
+        border: 2px solid red;
+        margin-top: 5px;
+    }
+
+    #new-comment {
+        border: solid 2px blue;
+    }
+
+    #new-comment form div {
+        width: 50%;
+    }
+
+    #new-comment form div label {
+        width: 30%;
+    }
+</style>
+<body>
+<div id="img">
+    <img id="img-of-the-day">
+</div>
+<div>
+    <h4>VIEW WITH STAR VOTE</h4>
+    <form>
+        <select name="vote">
+            <option value="">All</option>
+            <option value="1">1 - Bad</option>
+            <option value="2">2 - Normal</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Very Good</option>
+            <option value="5">5 - Perfect</option>
+        </select>
+        <button>SEARCH</button>
+    </form>
+</div>
+<fieldset>
+    <legend>Comment</legend>
+    <div th:each="comment, commentStat : ${comments}">
+        <fieldset id="comment">
+            <legend th:text="${commentStat.count}"></legend>
+            <div>
+                Name Viewer :
+                <span th:text="${comment.nameViewer}"></span>
+            </div>
+            <div>
+                Star vote :
+                <span th:text="${comment.vote}"></span>
+            </div>
+            <div>
+                Comment :
+                <span th:text="${comment.feedback}"></span>
+            </div>
+        </fieldset>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>New comment</legend>
+    <div id="new-comment">
+        <div>
+            <form th:action="@{/save}" th:object="${commentForm}" method="post" novalidate="novalidate">
+                <div>
+                    <label>Vote :</label>
+                    <select th:field="*{vote}">
+                        <option value="1">1 - Bad</option>
+                        <option value="2">2 - Normal</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Perfect</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Name Viewer :</label>
+                    <input type="text" th:field="*{nameViewer}">
+                </div>
+                <div>
+                    <label>Comment :</label>
+                    <textarea th:field="*{feedback}" cols="50" rows="6"></textarea>
+                </div>
+                <p th:text="${message}"></p>
+                <button>Summit</button>
+            </form>
+        </div>
+    </div>
+</fieldset>
+
+<script>
+    let query = 'https://api.nasa.gov/planetary/apod?api_key=ur6Z0wPbdOxD6JcT79Ng6HJRB9ZjOwfWLF3rcmOo';
+    let request = new XMLHttpRequest();
+    request.open('GET', query);
+    request.onload = function () {
+        if (request.status === 200) {
+            let response = JSON.parse(request.responseText);
+            document.getElementById('img-of-the-day').setAttribute('src', response.url);
+        }
+    };
+    request.send();
+</script>
+</body>
+</html>
